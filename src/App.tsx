@@ -39,6 +39,11 @@ const arrColors = ["#ffffff", "#ffd7b5", "#ffb38a", "#ff9248", "#ff6700"];
 function App() {
   const [selectedTask, setSelectedTask] = useState(null)
 
+  const handleSelectTask = (id) => {
+    alert(`Выбрана задача с id: ${id}`);
+    setSelectedTask(id)
+  } 
+
   if (tasks === null) {
     return (
       <>
@@ -60,9 +65,10 @@ function App() {
   return (
     <>
       <h1>Список дел</h1>
+      <button onClick={() => handleSelectTask(null)}>Сбросить выбор</button>
       <ul>
         {tasks.map((task) => (
-          <li key={task.id} style = {{backgroundColor: arrColors[task.priority], border: selectedTask === task.id ? '5px solid blue' : '' }} onClick={() => {setSelectedTask(task.id)}}>
+          <li key={task.id} style = {{backgroundColor: arrColors[task.priority], border: selectedTask === task.id ? '5px solid blue' : '' }} onClick={() => handleSelectTask(task.id)}>
             <div style={{textDecorationLine: task.isDone ? "line-through" : "none"}}>{task.title}</div>
             <label>
               Статус задачи <input type="checkbox" checked={task.isDone} />
