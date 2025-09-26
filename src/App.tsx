@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
 const tasks = [
@@ -37,12 +37,24 @@ const arrColors = ["#ffffff", "#ffd7b5", "#ffb38a", "#ff9248", "#ff6700"];
 
 
 function App() {
-  const [selectedTask, setSelectedTask] = useState(null)
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [tasks, setTasks] = useState([])
 
   const handleSelectTask = (id) => {
-    alert(`Выбрана задача с id: ${id}`);
     setSelectedTask(id)
   } 
+
+  useEffect(()=>{
+    fetch("https://trelly.it-incubator.app/api/1.0/boards/tasks", {
+      headers: {
+        "api-key": "06c51887-b3df-4ca6-ab96-dc03fd98521e"
+      }
+    })
+    .then(res => res.json())
+    .then(res => setTasks(res.data))
+  }, [])
+
+  console.log(tasks)
 
   if (tasks === null) {
     return (
@@ -68,12 +80,12 @@ function App() {
       <button onClick={() => handleSelectTask(null)}>Сбросить выбор</button>
       <ul>
         {tasks.map((task) => (
-          <li key={task.id} style = {{backgroundColor: arrColors[task.priority], border: selectedTask === task.id ? '5px solid blue' : '' }} onClick={() => handleSelectTask(task.id)}>
-            <div style={{textDecorationLine: task.isDone ? "line-through" : "none"}}>{task.title}</div>
+          <li key={task.id} style = {{backgroundColor: arrColors[task.attributes.priority], border: selectedTask === task.id ? '5px solid blue' : '' }} onClick={() => handleSelectTask(task.id)}>
+            <div style={{textDecorationLine: task.attributes.status === 2 ? "line-through" : "none"}}>{task.attributes.title}</div>
             <label>
-              Статус задачи <input type="checkbox" checked={task.isDone} />
+              Статус задачи <input type="checkbox" checked={task.attributes.status === 2 ? true : false} />
             </label>
-            <p>Дата создания задачи: {task.addedAt}</p>
+            <p>Дата создания задачи: {new Date (task.attributes.addedAt).toLocaleDateString()}</p>
           </li>
         ))}
       </ul>
