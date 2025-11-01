@@ -50,6 +50,11 @@ function App() {
       .then((res) => setTasks(res.data));
   }, []);
 
+  const handleResetSelect = () => {
+    setSelectedTaskId(null);
+    setSelectedTask(null);
+  }
+
   console.log(tasks);
 
   if (tasks === null) {
@@ -73,76 +78,81 @@ function App() {
   return (
     <>
       <h1>Список дел</h1>
-      <button onClick={() => setSelectedTaskId(null)}>Сбросить выбор</button>
-      <ul>
-        {tasks.map((task) => (
-          <li
-            key={task.id}
-            style={{
-              backgroundColor: arrColors[task.attributes.priority],
-              border: selectedTaskId === task.id ? "5px solid blue" : "",
-            }}
-            onClick={() => {
-              setSelectedTaskId(task.id);
-              setSelectedTask(null);
-              fetch(
-                `https://trelly.it-incubator.app/api/1.0/boards/${task.attributes.boardId}/tasks/${task.id}`,
-                //"https://trelly.it-incubator.app/api/1.0/boards/tasks" + task.id,
-                // `https://trelly.it-incubator.app/api/1.0/boards/${task.attributes.
-                //boardId}/tasks/${task.id}`
-                // /boards/{boardId}/tasks/{taskId}
-                {
-                  headers: {
-                    "api-key": "06c51887-b3df-4ca6-ab96-dc03fd98521e",
-                  },
-                }
-              )
-                .then((res) => res.json())
-                .then((json) => {
-                  setSelectedTask(json.data);
-                });
-            }}
-          >
-            <div
-              style={{
-                textDecorationLine:
-                  task.attributes.status === 2 ? "line-through" : "none",
-              }}
-            >
-              {task.attributes.title}
+     <div className="flex">
+        <div className="wrap_list">
+          <button onClick={() => handleResetSelect()}>Сбросить выбор</button>
+          <ul>
+            {tasks.map((task) => (
+              <li
+                key={task.id}
+                style={{
+                  backgroundColor: arrColors[task.attributes.priority],
+                  border: selectedTaskId === task.id ? "5px solid blue" : "",
+                }}
+                onClick={() => {
+                  setSelectedTaskId(task.id);
+                  setSelectedTask(null);
+                  fetch(
+                    `https://trelly.it-incubator.app/api/1.0/boards/${task.attributes.boardId}/tasks/${task.id}`,
+                    //"https://trelly.it-incubator.app/api/1.0/boards/tasks" + task.id,
+                    // `https://trelly.it-incubator.app/api/1.0/boards/${task.attributes.
+                    //boardId}/tasks/${task.id}`
+                    // /boards/{boardId}/tasks/{taskId}
+                    {
+                      headers: {
+                        "api-key": "06c51887-b3df-4ca6-ab96-dc03fd98521e",
+                      },
+                    }
+                  )
+                    .then((res) => res.json())
+                    .then((json) => {
+                      setSelectedTask(json.data);
+                    });
+                }}
+              >
+                <div
+                  style={{
+                    textDecorationLine:
+                      task.attributes.status === 2 ? "line-through" : "none",
+                  }}
+                >
+                  {task.attributes.title}
+                </div>
+                <label>
+                  Статус задачи{" "}
+                  <input
+                    type="checkbox"
+                    checked={task.attributes.status === 2 ? true : false}
+                  />
+                </label>
+                <p>
+                  Дата создания задачи:{" "}
+                  {new Date(task.attributes.addedAt).toLocaleDateString()}
+                </p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <h3>Task details</h3>
+          {selectedTask === null && selectedTaskId === null && <p>Task is not selected</p>}
+          {!selectedTask && selectedTaskId && <p>Loading...</p>}
+          {selectedTask && selectedTaskId && selectedTask.id !== selectedTaskId && <p>Loading...</p>}
+          {selectedTask && selectedTask.id === selectedTaskId && (
+            <div>
+              <ul>
+                <li>Задача: {selectedTask.attributes.title}</li>
+                <li>Название доски: {selectedTask.attributes.boardTitle}</li>
+                {selectedTask.attributes.description === null || "" ? (
+                  <li>Описание задачи отсутствует</li>
+                ) : (
+                  <li>Описание задачи: {selectedTask.attributes.description}</li>
+                )}
+              </ul>
             </div>
-            <label>
-              Статус задачи{" "}
-              <input
-                type="checkbox"
-                checked={task.attributes.status === 2 ? true : false}
-              />
-            </label>
-            <p>
-              Дата создания задачи:{" "}
-              {new Date(task.attributes.addedAt).toLocaleDateString()}
-            </p>
-          </li>
-        ))}
-      </ul>
-      <div>
-        <h3>Task details</h3>
-        {selectedTask  === null ? (
-          <p>Task is not selected</p>
-        ) : (
-          <div>
-            <ul>
-              <li>Задача: {selectedTask.attributes.title}</li>
-              <li>Название доски: {selectedTask.attributes.boardTitle}</li>
-              {selectedTask.attributes.description === null || "" ? (
-                <li>Описание задачи отсутствует</li>
-              ) : (
-                <li>Описание задачи: {selectedTask.attributes.description}</li>
-              )}
-            </ul>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+     </div>
     </>
   );
 }
