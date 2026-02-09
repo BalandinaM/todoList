@@ -1,10 +1,7 @@
 import { useState, useEffect } from "react";
-import "./App.css";
+//import "./App.css";
 
-
-//выполнить домашку по 15 уроку
-
-const tasks = [
+const tasksMock = [
   {
     id: 1,
     title: "Купить продукты на неделю",
@@ -38,67 +35,29 @@ const tasks = [
 //массив цветов для обозначения приоритетности задачи
 const arrColors = ["#ffffff", "#ffd7b5", "#ffb38a", "#ff9248", "#ff6700"];
 
-function App() {
+export const TasksList = () => {
   const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [boardId, setBoardId] = useState(null)
+  const [tasks, setTasks] = useState(tasksMock);
+  const [boardId, setBoardId] = useState(null);
 
-  useEffect(() => {
-    fetch("https://trelly.it-incubator.app/api/1.0/boards/tasks", {
-      headers: {
-        "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => setTasks(res.data));
-  }, []);
-
-  useEffect(() => {
-    fetch(
-      `https://trelly.it-incubator.app/api/1.0/boards/${boardId}/tasks/${selectedTaskId}`,
-      {
-        headers: {
-          "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
-        },
-      },
-    )
-      .then((res) => res.json())
-      .then((json) => {
-        setSelectedTask(json.data);
-      });
-  }, [boardId, selectedTaskId]);
+  // useEffect(() => {
+  //   fetch("https://trelly.it-incubator.app/api", {
+  //     headers: {
+  //       "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => setTasks(res.data));
+  // }, []);
 
   const handleResetSelect = () => {
     setSelectedTaskId(null);
     setSelectedTask(null);
-  }
-
-  console.log(tasks);
-
-  if (tasks === null) {
-    return (
-      <>
-        <h1>Список дел</h1>
-        <p>Загрузка...</p>
-      </>
-    );
-  }
-
-  if (tasks.length === 0) {
-    return (
-      <>
-        <h1>Список дел</h1>
-        <p>Тут пока пусто...</p>
-      </>
-    );
-  }
+  };
 
   return (
-    <>
-      <h1>Список дел</h1>
-     <div className="flex">
-        <div className="wrap_list">
+    <div className="wrap_list">
           <button onClick={() => handleResetSelect()}>Сбросить выбор</button>
           <ul>
             {tasks.map((task) => (
@@ -111,7 +70,7 @@ function App() {
                 onClick={() => {
                   setSelectedTaskId(task.id);
                   setSelectedTask(null);
-                  setBoardId(task.attributes.boardId)
+                  setBoardId(task.attributes.boardId);
                 }}
               >
                 <div
@@ -137,28 +96,5 @@ function App() {
             ))}
           </ul>
         </div>
-        <div>
-          <h3>Task details</h3>
-          {selectedTask === null && selectedTaskId === null && <p>Task is not selected</p>}
-          {!selectedTask && selectedTaskId && <p>Loading...</p>}
-          {selectedTask && selectedTaskId && selectedTask.id !== selectedTaskId && <p>Loading...</p>}
-          {selectedTask && selectedTask.id === selectedTaskId && (
-            <div>
-              <ul>
-                <li>Задача: {selectedTask.attributes.title}</li>
-                <li>Название доски: {selectedTask.attributes.boardTitle}</li>
-                {selectedTask.attributes.description === null || "" ? (
-                  <li>Описание задачи отсутствует</li>
-                ) : (
-                  <li>Описание задачи: {selectedTask.attributes.description}</li>
-                )}
-              </ul>
-            </div>
-          )}
-        </div>
-     </div>
-    </>
-  );
+  )
 }
-
-export default App;
