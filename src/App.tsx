@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
-
 //выполнить домашку по 15 уроку
 
 const tasks = [
@@ -39,20 +38,20 @@ const tasks = [
 const arrColors = ["#ffffff", "#ffd7b5", "#ffb38a", "#ff9248", "#ff6700"];
 
 function App() {
-  const [selectedTaskId, setSelectedTaskId] = useState(null);
+  // const [selectedTaskId, setSelectedTaskId] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [boardId, setBoardId] = useState(null)
+  // const [tasks, setTasks] = useState([]);
+  const [boardId, setBoardId] = useState(null);
 
-  useEffect(() => {
-    fetch("https://trelly.it-incubator.app/api/1.0/boards/tasks", {
-      headers: {
-        "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
-      },
-    })
-      .then((res) => res.json())
-      .then((res) => setTasks(res.data));
-  }, []);
+  // useEffect(() => {
+  //   fetch("https://trelly.it-incubator.app/api/1.0/boards/tasks", {
+  //     headers: {
+  //       "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
+  //     },
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => setTasks(res.data));
+  // }, []);
 
   useEffect(() => {
     fetch(
@@ -72,35 +71,35 @@ function App() {
   const handleResetSelect = () => {
     setSelectedTaskId(null);
     setSelectedTask(null);
-  }
+  };
 
   console.log(tasks);
 
-  if (tasks === null) {
-    return (
-      <>
-        <h1>Список дел</h1>
-        <p>Загрузка...</p>
-      </>
-    );
-  }
+  // if (tasks === null) {
+  //   return (
+  //     <>
+  //       <h1>Список дел</h1>
+  //       <p>Загрузка...</p>
+  //     </>
+  //   );
+  // }
 
-  if (tasks.length === 0) {
-    return (
-      <>
-        <h1>Список дел</h1>
-        <p>Тут пока пусто...</p>
-      </>
-    );
-  }
+  // if (tasks.length === 0) {
+  //   return (
+  //     <>
+  //       <h1>Список дел</h1>
+  //       <p>Тут пока пусто...</p>
+  //     </>
+  //   );
+  // }
 
   return (
     <>
       <h1>Список дел</h1>
-     <div className="flex">
+      <div className="flex">
         <div className="wrap_list">
           <button onClick={() => handleResetSelect()}>Сбросить выбор</button>
-          <ul>
+          {/* <ul>
             {tasks.map((task) => (
               <li
                 key={task.id}
@@ -135,13 +134,17 @@ function App() {
                 </p>
               </li>
             ))}
-          </ul>
+          </ul> */}
         </div>
-        <div>
+        {/* <div>
           <h3>Task details</h3>
-          {selectedTask === null && selectedTaskId === null && <p>Task is not selected</p>}
+          {selectedTask === null && selectedTaskId === null && (
+            <p>Task is not selected</p>
+          )}
           {!selectedTask && selectedTaskId && <p>Loading...</p>}
-          {selectedTask && selectedTaskId && selectedTask.id !== selectedTaskId && <p>Loading...</p>}
+          {selectedTask &&
+            selectedTaskId &&
+            selectedTask.id !== selectedTaskId && <p>Loading...</p>}
           {selectedTask && selectedTask.id === selectedTaskId && (
             <div>
               <ul>
@@ -150,13 +153,15 @@ function App() {
                 {selectedTask.attributes.description === null || "" ? (
                   <li>Описание задачи отсутствует</li>
                 ) : (
-                  <li>Описание задачи: {selectedTask.attributes.description}</li>
+                  <li>
+                    Описание задачи: {selectedTask.attributes.description}
+                  </li>
                 )}
               </ul>
             </div>
           )}
-        </div>
-     </div>
+        </div> */}
+      </div>
     </>
   );
 }

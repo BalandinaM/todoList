@@ -36,65 +36,73 @@ const tasksMock = [
 const arrColors = ["#ffffff", "#ffd7b5", "#ffb38a", "#ff9248", "#ff6700"];
 
 export const TasksList = () => {
+  const [tasks, setTasks] = useState([]);
   const [selectedTaskId, setSelectedTaskId] = useState(null);
-  const [selectedTask, setSelectedTask] = useState(null);
-  const [tasks, setTasks] = useState(tasksMock);
-  const [boardId, setBoardId] = useState(null);
 
-  // useEffect(() => {
-  //   fetch("https://trelly.it-incubator.app/api", {
-  //     headers: {
-  //       "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
-  //     },
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => setTasks(res.data));
-  // }, []);
+  useEffect(() => {
+    fetch("https://trelly.it-incubator.app/api/1.0/boards/tasks", {
+      headers: {
+        "api-key": "ae08815d-4b7d-4dbb-b624-ec8beab5ced9",
+      },
+    })
+      .then((res) => res.json())
+      .then((res) => setTasks(res.data));
+  }, []);
 
-  const handleResetSelect = () => {
-    setSelectedTaskId(null);
-    setSelectedTask(null);
-  };
+  if (tasks === null) {
+    return (
+      <>
+        <h1>Список дел</h1>
+        <p>Загрузка...</p>
+      </>
+    );
+  }
+
+  if (tasks.length === 0) {
+    return (
+      <>
+        <h1>Список дел</h1>
+        <p>Тут пока пусто...</p>
+      </>
+    );
+  }
 
   return (
-    <div className="wrap_list">
-          <button onClick={() => handleResetSelect()}>Сбросить выбор</button>
-          <ul>
-            {tasks.map((task) => (
-              <li
-                key={task.id}
-                style={{
-                  backgroundColor: arrColors[task.attributes.priority],
-                  border: selectedTaskId === task.id ? "5px solid blue" : "",
-                }}
-                onClick={() => {
-                  setSelectedTaskId(task.id);
-                  setSelectedTask(null);
-                  setBoardId(task.attributes.boardId);
-                }}
-              >
-                <div
-                  style={{
-                    textDecorationLine:
-                      task.attributes.status === 2 ? "line-through" : "none",
-                  }}
-                >
-                  {task.attributes.title}
-                </div>
-                <label>
-                  Статус задачи{" "}
-                  <input
-                    type="checkbox"
-                    checked={task.attributes.status === 2 ? true : false}
-                  />
-                </label>
-                <p>
-                  Дата создания задачи:{" "}
-                  {new Date(task.attributes.addedAt).toLocaleDateString()}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-  )
-}
+    <ul>
+      {tasks.map((task) => (
+        <li
+          key={task.id}
+          style={{
+            backgroundColor: arrColors[task.attributes.priority],
+            border: selectedTaskId === task.id ? "5px solid blue" : "",
+          }}
+          onClick={() => {
+            setSelectedTaskId(task.id);
+            // setSelectedTask(null);
+            // setBoardId(task.attributes.boardId);
+          }}
+        >
+          <div
+            style={{
+              textDecorationLine:
+                task.attributes.status === 2 ? "line-through" : "none",
+            }}
+          >
+            {task.attributes.title}
+          </div>
+          <label>
+            Статус задачи{" "}
+            <input
+              type="checkbox"
+              checked={task.attributes.status === 2 ? true : false}
+            />
+          </label>
+          <p>
+            Дата создания задачи:{" "}
+            {new Date(task.attributes.addedAt).toLocaleDateString()}
+          </p>
+        </li>
+      ))}
+    </ul>
+  );
+};
